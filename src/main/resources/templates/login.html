@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>魔电后台管理系统</title>
+    
+	<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Dashboard">
+    <meta name="keyword" content="Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
+	<script type="text/javascript" th:src="@{/js/loader.js}"></script>
+	<link rel="stylesheet" th:href="@{/css/style.css}" />
+  </head>
+  
+  <body>
+    	<div id="login-page">
+	  		<div class="container">
+		      <form class="form-login" action="/adminLogin.do" method="post">
+		        <h2 class="form-login-heading">魔电后台管理系统</h2>
+		        <div class="login-wrap"><!-- required 必填， autofocus 光标锁定-->
+		            <input type="text" class="form-control" placeholder="请输入管理员名" name="adminName" required autofocus>
+		            <br>
+		            <input type="password" class="form-control" placeholder="请输入管理员密码" name="adminPassword" required>
+		            <br>
+		            <button class="btn btn-theme btn-block" type="submit"><i class="fa fa-lock"></i>登录</button>
+		            <hr>
+		        </div>
+		      </form>	  	
+	  		</div>
+	  </div>
+	  <!-- thymeleaf要在js中使用，必须要有th:inline="javascript"，且取值时要用[[${xxx}]] 形式-->
+	  <script type="text/javascript" th:inline="javascript">
+        	$.backstretch("images/login-bg.jpg", {speed: 500});
+        	
+        	//从后台取值弹出消息
+        	var msg = [[${msg}]];
+		    if(msg!=""&&msg!=undefined){
+		    	toastr.warning(msg);
+	    	}
+      </script>
+	  
+  </body>
+</html>

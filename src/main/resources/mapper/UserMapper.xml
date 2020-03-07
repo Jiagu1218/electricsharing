@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyxy.dao.UserDao">
+  <resultMap id="BaseResultMap" type="com.cyxy.entity.User">
+    <id column="userId" jdbcType="INTEGER" property="userId" />
+    <result column="userName" jdbcType="VARCHAR" property="userName" />
+    <result column="userPassword" jdbcType="VARCHAR" property="userPassword" />
+    <result column="userPhone" jdbcType="VARCHAR" property="userPhone" />
+    <result column="userDeposit" jdbcType="VARCHAR" property="userDeposit" />
+    <result column="userBalance" jdbcType="DOUBLE" property="userBalance" />
+    <result column="userState" jdbcType="VARCHAR" property="userState" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    userId, userName, userPhone, userDeposit, userBalance, userState
+  </sql>
+  <select id="findUser" resultType="com.cyxy.entity.User">
+    select <include refid="Base_Column_List"/>  from user where 1=1
+    <if test="userId != null and userId != ''">
+      and userId = #{userId}
+    </if>
+    <if test="userName != null and userName != ''">
+      and userName = #{userName}
+    </if>
+    <if test="userState != null and userState != ''">
+      and userState = #{userState}
+    </if>
+  </select>
+  <update id="updateUserById" parameterType="com.cyxy.dao.UserDao">
+    update user set userName=#{userName},userPhone=#{userPhone},userState=#{userState} where userId = #{userId}
+  </update>
+
+  <select id="userLogin" parameterType="com.cyxy.entity.User" resultType="com.cyxy.entity.User">
+    select <include refid="Base_Column_List"/> from user where userName = #{userName} and userPassword = #{userPassword}
+  </select>
+
+  <select id="findUserByUserName" resultType="com.cyxy.entity.User">
+    select userName from user where userName = #{userName}
+  </select>
+
+  <select id="findUserByUserPhone" resultType="com.cyxy.entity.User">
+    select userPhone from user where userPhone = #{userPhone}
+  </select>
+
+  <insert id="userRegister" parameterType="com.cyxy.entity.User" >
+      insert into user(userName, userPassword, userPhone, userBalance, userDeposit) value (#{userName}, #{userPassword}, #{userPhone}, #{userBalance}, #{userDeposit})
+  </insert>
+
+  <update id="updateUser" parameterType="com.cyxy.entity.User">
+    update user set userState = #{userState}
+    <if test="userName != null and userName != ''">
+      , userName = #{userName}
+    </if>
+    <if test="userPhone != null and userPhone != ''">
+      , userPhone = #{userPhone}
+    </if>
+     where userId = #{userId}
+  </update>
+
+  <select id="findUserById" resultType="com.cyxy.entity.User">
+    select <include refid="Base_Column_List"/> from user where userId = #{userId}
+  </select>
+
+  <update id="updateUserBalance">
+    update user set userBalance = userBalance - #{price} where userId = #{userId}
+  </update>
+
+  <delete id="deleteUsers" parameterType="java.util.List">
+    DELETE FROM user WHERE userId in
+    <foreach collection="list" item="userId" open="(" separator="," close=")">
+      #{userId}
+    </foreach>
+  </delete>
+
+  <update id="charge">
+    update user set userBalance = userBalance + #{amount} where  userId = #{userId}
+  </update>
+</mapper>

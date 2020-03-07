@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+
+<html lang="zxx" class="no-js">
+<head>
+	<!-- Mobile Specific Meta -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<!-- Favicon-->
+	<link rel="shortcut icon" href="img/fav.png">
+	<!-- Author Meta -->
+	<meta name="author" content="CodePixar">
+	<!-- Meta Description -->
+	<meta name="description" content="">
+	<!-- Meta Keyword -->
+	<meta name="keywords" content="">
+	<!-- meta character set -->
+	<meta charset="UTF-8">
+	<!-- Site Title -->
+	<title>Dup</title>
+
+	<link href="https://fonts.googleapis.com/css?family=Poppins:100,300,500" rel="stylesheet">
+		<!--
+		CSS
+		============================================= -->
+		<link rel="stylesheet" href="front/css/linearicons.css">
+		<link rel="stylesheet" href="front/css/owl.carousel.css">
+		<link rel="stylesheet" href="front/css/font-awesome.min.css">
+		<link rel="stylesheet" href="front/css/nice-select.css">
+		<link rel="stylesheet" href="front/css/magnific-popup.css">
+		<link rel="stylesheet" href="front/css/bootstrap.css">
+		<link rel="stylesheet" href="front/css/main.css">
+		<link rel="stylesheet" href="/css/toastr.css"/>
+	<style>
+		.positionfix{
+			position: fixed;
+			top: 15px;
+		}
+		nav {
+			background-color: #00bfff85;
+		}
+		nav a{
+			font-size: 12px;
+			font-weight: 500;
+			text-transform: uppercase;
+			color: #222222;
+			margin: 0 !important;
+			display: inline-block;
+			border-right: 2px solid #dbdbea;
+			border-bottom: 2px solid #dbdbea;
+			/*padding: 2px 25px;*/
+			width: 100px;
+			text-align: center;
+		}
+		nav a:last-child {
+			border-right: none;
+			border-bottom: none;
+		}
+		@media (max-width: 767px){
+			nav {
+				padding: 0;
+			}
+			nav a{
+				font-size: 12px;
+				font-weight: 500;
+				text-transform: uppercase;
+				color: #222222;
+				margin: 0 !important;
+				display: inline-block;
+				/*border-right: 2px solid #dbdbea;*/
+				border-bottom: 2px solid #dbdbea;
+				/*padding: 2px 25px;*/
+				width: 100px;
+				text-align: center;
+			}
+			nav a:last-child {
+				border-right: none;
+				border-bottom: none;
+			}
+		}
+
+
+	</style>
+	</head>
+	<body class="dup-body">
+		<div id="app">
+			<div class="dup-body-wrap">
+				<!-- Start Header Area -->
+				<header class="default-header positionfix">
+					<div class="header-wrap">
+						<div class="header-top d-flex justify-content-between align-items-center">
+							<div class="logo">
+								<a href="#"><img src="img/logo.png" alt=""></a>
+							</div>
+							<div class="main-menubar d-flex align-items-center">
+								<nav class="hide">
+                                    <a v-if="user !=''">{{user.userName}}</a>
+                                    <a v-else href="/loginandregister.do">用户登录</a>
+									<a v-if="user !=''" href="info.do">个人信息</a>
+									<a v-if="user !=''" onclick="exitLogin()">退出登录</a>
+								</nav>
+								<div class="menu-bar"><span class="lnr lnr-menu"></span></div>
+							</div>
+						</div>
+					</div>
+				</header>
+				<!-- End Header Area -->
+				<!-- Start Banner Area -->
+				<section class="banner-area relative">
+					<!--<div class="overlay overlay-bg"></div>-->
+					<div class="container-full">
+						<div class="row fullscreen align-items-center justify-content-between"  id="allmap">
+							<!--<div id="allmap"></div>-->
+							<!--<div v-for="item in user">
+								<button @click="ffff">{{item.hubId}}</button>
+							</div>-->
+							<!--<div class="col-lg-6 col-md-7 col-sm-8">
+                                <div class="banner-content">
+                                    <h1>Sleek and Clean <br> with same perspective</h1>
+                                    <p>Living in today’s metropolitan world of cellular phones, mobile computers and other high-tech gadgets.</p>
+                                    <a href="#" class="primary-btn">Get Started<span class="lnr lnr-arrow-right"></span></a>
+                                </div>
+                            </div>
+                            <div class="col-lg-5 col-md-5 col-sm-4">
+                                <img src="img/banner.png" alt="" class="img-fluid">
+                            </div>-->
+						</div>
+					</div>
+				</section>
+				<!-- End Banner Area -->
+				<!-- End Achivement Area -->
+			</div>
+		</div>
+
+
+		<script src="front/js/vendor/jquery-2.2.4.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
+		<script src="front/js/vendor/bootstrap.min.js"></script>
+		<script src="front/js/jquery.ajaxchimp.min.js"></script>
+		<script src="front/js/owl.carousel.min.js"></script>
+		<script src="front/js/jquery.nice-select.min.js"></script>
+		<script src="front/js/jquery.magnific-popup.min.js"></script>
+		<script src="front/js/main.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+		<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=3.0&ak=mLiFKf643aRs1dpik9CDY7gWflDSoldi"></script>
+		<script src="/js/toastr.js"></script>
+		<script src="/js/tip.js"></script>
+		<script>
+			toastr.options.positionClass = 'toast-top-center';
+			var app = new Vue({
+				el: "#app",
+				data: {
+					user:'',
+					map:'',//地图实例
+					geoc:'',
+					geol:'',
+					driving:'',
+					partners : '',
+					bounds:'',
+					centerPoint:'',
+					city:'',
+					myPosition:new BMap.Point(118.08, 24.61),
+					clickPosition:''
+				},
+				created (){
+					axios.get('/getLoginUser.do')
+							.then(response => {
+								console.log("response",response);
+								this.user = response.data.data;
+							})
+							.catch(function (error) {
+								console.log(error);
+							});
+					/*console.log('2')*/
+					axios.get('/partner/findPartner.do',{
+						/*params: {
+							partnerId: 2
+						}*/
+					})
+					.then(response => {
+						console.log(response);
+						this.partners=response.data.datas;
+						console.log(this.partners);
+						this.getPartner();
+					})
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+				},
+				mounted () {
+					this.map = new BMap.Map("allmap");
+                    this.map.centerAndZoom(new BMap.Point(118.08, 24.61), 18);
+                    this.driving =  new BMap.DrivingRoute(this.map, {renderOptions:{map: this.map, autoViewport: true}});
+					this.geoc = new BMap.Geocoder(); //创建一个地址解析器的实例
+					this.geol = new BMap.Geolocation();	//创建Geolocation对象实例 定位
+					this.geol.enableSDKLocation(); //开启SDK辅助定位，仅当使用环境为移动web混合开发，且开启了定位sdk辅助定位功能后生效
+					let _map=this.map;
+					let _this=this;
+                    this.getCenter();
+					this.geol.getCurrentPosition(  function(gr){//返回用户当前位置。定位完成时（包括成功、失败、超时等情况），回调参数为GeolocationResult对象，否则为null
+						console.log(this.getStatus());
+						if(this.getStatus() == BMAP_STATUS_SUCCESS){
+							/*let myIcon = new BMap.Icon("../img/placeholder.png", new BMap.Size(300,157));*/
+							var mk = new BMap.Marker(gr.point);
+							mk.setAnimation(BMAP_ANIMATION_BOUNCE);
+							_map.addOverlay(mk);
+							_map.panTo(gr.point);
+							_this.myPosition=gr.point;
+							toastr.success('您的位置：'+gr.point.lng+','+gr.point.lat);
+						}else if(this.getStatus()==8){
+							toastr.warning('定位超时使用默认位置');
+						}
+					},{enableHighAccuracy: true});
+					this.map.addEventListener("dragend",this.dragend);
+
+				},
+				methods: {
+					ffff () {
+						console.log('5555')
+					},
+					getPartner (){
+						var _this=this;
+						console.log('p',this.partners);
+						for (var  partner  of this.partners) {
+							console.log(partner);
+							var marker=new BMap.Marker(new BMap.Point(partner.partnerLng,partner.partnerLat));
+							marker.partner=partner;
+							console.log(marker.partner);
+							console.log("partner",partner);
+							marker.setTitle(partner.partnerName);
+							marker.addEventListener("mouseover",function(){this.setTop(true)});
+							marker.addEventListener("mouseout",function(){this.setTop(false)});
+							marker.addEventListener("click",function () {_this.onMarkerClick(this)});
+							this.map.addOverlay(marker);
+						}
+					},
+					dragend (){
+						console.log("dragend");
+
+					},
+					getCenter(){
+						console.log("map",this.map);
+						this.bounds=this.map.getBounds(); //获取可视区域
+						// console.log("bounds",this.bounds);
+						console.log("center"+this.bounds.getCenter().lng);
+						this.centerPoint=this.bounds.getCenter(); //地图中心点
+						this.geoc.getLocation(this.centerPoint, function(rs){  //解析点所在位置
+							var addComp = rs.addressComponents;
+							//console.log(addComp.city);
+							this.city=addComp.city;
+							console.log(addComp.province + ", " + addComp.city + ", " + addComp.district + ", " + addComp.street + ", " + addComp.streetNumber);
+						});
+					},
+                    clean(){
+					    console.log("clean");
+                        this.map.clearOverlays();//清除所有覆盖物
+                    },
+                    onMarkerClick(e){
+						console.log("onMarkerClick",e);
+						console.log("typeof{},id{}",typeof e.partner.partnerId,e.partner.partnerId);
+						this.clickPosition = e.getPosition();
+						var canRentCount;
+						var canReturnCount;
+						$.ajax({
+							url:'/power/getCanRentCountAndCanReturnCount.do',
+							type:'GET', //GET
+							async:false,    //或false,是否异步
+							data:{
+								partnerId : e.partner.partnerId
+							},
+							timeout:5000,    //超时时间
+							dataType:'json',    //返回的数据格式：
+							success:function(data){
+								console.log("canRentAndReturnCount",data);
+								console.log("canRentAndReturnCount",data.data.canRentCount);
+								canRentCount = data.data.canRentCount;
+								canReturnCount = data.data.canReturnCount;
+							}
+						})
+						
+						let opts = {
+							title : "商家信息" , // 信息窗口标题
+							enableMessage:true//设置允许信息窗发送短息
+						}
+						let userAgent = navigator.userAgent;
+						let urlPath;
+						let src;
+						if (userAgent.search("iPhone") != -1){
+							urlPath = "baidumap://map/direction";
+							src = "ios.baidu.openAPIdemo";
+							console.log("urlPath",urlPath);
+						} else{
+							urlPath = "bdapp://map/direction";
+							src = "andr.baidu.openAPIdemo";
+							console.log("urlPath",urlPath);
+						}
+						let html= `<table class="table table-hover" style="font: 14px '微软雅黑' ;">
+										<tr>
+											<td>名称：</td>
+											<td colspan="2">${e.partner.partnerName}</td>
+										</tr>
+										<tr>
+											<td>电话：</td>
+											<td colspan="2">${e.partner.partnerPhone}</td>
+										</tr>
+										<tr>
+											<td>可供租借数：</td>
+											<td>${canRentCount}</td>
+											<td><button class="btn btn-success btn-sm" onclick="rentPower(this,${e.partner.partnerId})">租借</button></td>
+										</tr>
+										<tr>
+											<td>可供归还数：</td>
+											<td>${canReturnCount}</td>
+											<td><button class="btn btn-primary btn-sm" onclick="returnPower(this,${e.partner.partnerId})">归还</button></td>
+										</tr>
+										<tr>
+											<td colspan="3"><a href="${urlPath}?origin=${this.myPosition.lat},${this.myPosition.lng}&destination=${e.partner.partnerLat},${e.partner.partnerLng}&coord_type=bd09ll&mode=driving&src=${src}" class="btn btn-danger">(百度地图)导航到此</a></td>
+										</tr>
+									</table>`
+						var infoWindow = new BMap.InfoWindow(html,opts);
+						this.map.openInfoWindow(infoWindow,e.getPosition()); //开启信息窗口
+                    }
+				}
+			})
+
+			//租借
+			function rentPower(e,partnerId){
+				console.log("rentPower",e.parentNode.parentNode.childNodes);
+				var info = e.parentNode.parentNode.childNodes;
+				var canRentCount = info[3].innerText;
+				console.log("partnerId",partnerId);
+				if (canRentCount != 0){
+					Tip.confirm({
+						message : "确认要租借吗？"
+					}).on(function(e) {
+						console.log(e)
+						if (!e) return;
+						console.log("app",app);
+						$.ajax({
+							url:'/power/rentPower.do',
+							type:'POST', //GET
+							//async:false,    //或false,是否异步
+							data:{
+								partnerId:partnerId
+							},
+							dataType:'json',    //返回的数据格式：
+							success:function(data){
+								console.log("confirm",data);
+								switch (data.state) {
+									case 200:
+										Tip.alert(data.message);
+										app._data.map.closeInfoWindow();
+										break;
+									case 201:needLogin(data.message);break;
+									case 202:toastr.error(data.message);break;
+									case 203:toastr.info(data.message);break;
+									default:toastr.error(data.message);break;
+								}
+							}
+						})
+					});
+				}else {
+					Tip.alert("没有可供租借的电宝");
+				}
+			}
+			//归还
+			function returnPower(e,partnerId) {
+				let info = e.parentNode.parentNode.childNodes;
+				let canReturnCount = info[3].innerText;
+				if (canReturnCount != 0){
+					Tip.confirm({
+						message : "确认要归还吗？"
+					}).on(function(e) {
+						console.log(e)
+						if (!e) return;
+						$.ajax({
+							url:'/power/returnPower.do',
+							type:'POST', //GET
+							//async:false,    //或false,是否异步
+							data:{
+								partnerId:partnerId
+							},
+							dataType:'json',    //返回的数据格式：
+							success:function(data){
+								console.log("confirm",data);
+								switch (data.state) {
+									case 300:
+										Tip.alert(data.message);
+										app._data.map.closeInfoWindow();
+										break;
+									case 201:needLogin(data.message);break;//未登录
+                                    case 204:toastr.info(data.message);break;
+									case 205:toastr.error(data.message);break;
+									default:toastr.error(data.message);break;
+								}
+							}
+						})
+					});
+				}else {
+					Tip.alert("没有可供归还的端口");
+				}
+			}
+
+			function needLogin(message) {
+                Tip.confirm({message:message}).on(function (e) {
+                    if (!e) return;
+                    window.location.href="/loginandregister.do";
+                })
+            }
+
+            function exitLogin() {
+				Tip.confirm({message:"是否退出登录"}).on(function (e) {
+					if (!e) return;
+					$.ajax({
+						url:'/exit.do',
+						type:'GET', //GET
+						success:function (data) {
+							window.location.href="/";
+						}
+					})
+				})
+			}
+
+			/*var walking = new BMap.WalkingRoute(map, {
+				renderOptions: {
+					map: app._data.map,
+					autoViewport: true
+				}
+			})*/
+
+			/*function navigationToHere(){
+				let origin="origin=latlng:"+app._data.myPosition.lat+","+app._data.myPosition.lng;
+				let destination="destination=latlng:"+app._data.clickPosition.lat+","+app._data.clickPosition.lng;
+				let mode="mode=walking";
+				let coord_type ="coord_type= bd09ll";
+				let other="output=html&src=webapp.baidu.openAPIdemo";
+				console.log("origin",origin);
+				console.log("destination",destination);
+				let path="http://api.map.baidu.com/direction?"
+				let url=path+origin+"&"+destination+"&"+mode+"&"+coord_type+"&"+other;
+				console.log('url',url);
+
+			}*/
+			</script>
+	</body>
+</html>

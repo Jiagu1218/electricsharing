@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyxy.dao.HubDao">
+  <resultMap id="BaseResultMap" type="com.cyxy.entity.Hub">
+    <id column="hubId" jdbcType="INTEGER" property="hubId" />
+    <result column="hubLng" jdbcType="DOUBLE" property="hubLng" />
+    <result column="hubLat" jdbcType="DOUBLE" property="hubLat" />
+    <result column="hubState" jdbcType="VARCHAR" property="hubState" />
+    <result column="hubPort" jdbcType="INTEGER" property="hubPort" />
+    <result column="partnerId" jdbcType="INTEGER" property="partnerId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    hubId, hubLng, hubLat, hubState, hubPort, partnerId
+  </sql>
+  <select id="findHubByPartnerId" resultType="com.cyxy.entity.Hub">
+    select <include refid="Base_Column_List"/> from hub where partnerId = #{hubId}
+  </select>
+
+  <select id="findCanUserReturnHub" resultType="com.cyxy.entity.Hub">
+    SELECT e.hubId FROM (SELECT a.hubId, (a.hubPort-COUNT(b.powerId)) freePort FROM power b,
+    ( SELECT hubId ,hubPort FROM hub WHERE partnerId = #{partnerId} AND hubState="正常")a
+    WHERE b.hubId = a.hubId GROUP BY a.hubId) e WHERE e.freePort>0
+  </select>
+
+  <insert id="addHub" useGeneratedKeys="true" keyProperty="hubId" parameterType="com.cyxy.entity.Hub">
+    insert into hub(hubLng, hubLat, hubState, hubPort, partnerId) VALUE (#{hubLng},#{hubLat},#{hubState},#{hubPort},#{partnerId})
+  </insert>
+</mapper>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyxy.dao.PartnerDao">
+  <resultMap id="BaseResultMap" type="com.cyxy.entity.Partner">
+    <id column="partnerId" jdbcType="INTEGER" property="partnerId" />
+    <result column="partnerName" jdbcType="VARCHAR" property="partnerName" />
+    <result column="partnerPassword" jdbcType="VARCHAR" property="partnerPassword" />
+    <result column="partnerLng" jdbcType="DOUBLE" property="partnerLng" />
+    <result column="partnerLat" jdbcType="DOUBLE" property="partnerLat" />
+    <result column="partnerPhone" jdbcType="VARCHAR" property="partnerPhone" />
+    <result column="partnerCity" jdbcType="VARCHAR" property="partnerCity" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    partnerId, partnerName, partnerLng, partnerLat, partnerPhone, partnerCity
+  </sql>
+  <select id="findPartner" parameterType="com.cyxy.entity.Partner" resultType="com.cyxy.entity.Partner">
+    select <include refid="Base_Column_List"/> from partner where 1=1
+    <if test="partnerName != null">
+      and partnerName like CONCAT("%",#{partnerName},"%")
+    </if>
+    <if test="partnerLat != null">
+      and partnerLat between #{partnerLat}-0.2 and #{partnerLat}+0.2
+    </if>
+    <if test="partnerLng != null">
+      and partnerLng between #{partnerLng}-0.02 and #{partnerLng}+0.02
+    </if>
+  </select>
+  <select id="getPartnerByPartnerId" resultType="com.cyxy.entity.Partner">
+    select <include refid="Base_Column_List"/> from partner where partnerId = #{partnerId}
+  </select>
+  <insert id="addPartner" parameterType="com.cyxy.entity.Partner">
+    insert into partner(partnerName,partnerLng, partnerLat, partnerPhone, partnerCity)
+    value (#{partnerName},#{partnerLng},#{partnerLat},#{partnerPhone},#{partnerCity})
+  </insert>
+
+  <update id="updatePartner" parameterType="com.cyxy.entity.Partner">
+    update partner set partnerPhone = #{partnerPhone}
+     <if test="partnerName != null and partnerName != ''">
+       ,partnerName = #{partnerName}
+     </if>
+     where partnerId = #{partnerId}
+  </update>
+</mapper>

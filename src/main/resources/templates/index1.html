@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+
+<html lang="zxx" class="no-js">
+<head>
+	<!-- Mobile Specific Meta -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<!-- Favicon-->
+	<link rel="shortcut icon" href="img/fav.png">
+	<!-- Author Meta -->
+	<meta name="author" content="CodePixar">
+	<!-- Meta Description -->
+	<meta name="description" content="">
+	<!-- Meta Keyword -->
+	<meta name="keywords" content="">
+	<!-- meta character set -->
+	<meta charset="UTF-8">
+	<!-- Site Title -->
+	<title>Dup</title>
+
+	<link href="https://fonts.googleapis.com/css?family=Poppins:100,300,500" rel="stylesheet">
+		<!--
+		CSS
+		============================================= -->
+		<link rel="stylesheet" href="front/css/linearicons.css">
+		<link rel="stylesheet" href="front/css/owl.carousel.css">
+		<link rel="stylesheet" href="front/css/font-awesome.min.css">
+		<link rel="stylesheet" href="front/css/nice-select.css">
+		<link rel="stylesheet" href="front/css/magnific-popup.css">
+		<link rel="stylesheet" href="front/css/bootstrap.css">
+		<link rel="stylesheet" href="front/css/main.css">
+		<link rel="stylesheet" href="/css/toastr.css"/>
+	<style>
+		.positionfix{
+			position: fixed;
+			top: 15px;
+		}
+		nav {
+			background-color: #00bfff85;
+		}
+		nav a{
+			font-size: 12px;
+			font-weight: 500;
+			text-transform: uppercase;
+			color: #222222;
+			margin: 0 !important;
+			display: inline-block;
+			border-right: 2px solid #dbdbea;
+			border-bottom: 2px solid #dbdbea;
+			/*padding: 2px 25px;*/
+			width: 100px;
+			text-align: center;
+		}
+		nav a:last-child {
+			border-right: none;
+			border-bottom: none;
+		}
+		@media (max-width: 767px){
+			nav {
+				padding: 0;
+			}
+			nav a{
+				font-size: 12px;
+				font-weight: 500;
+				text-transform: uppercase;
+				color: #222222;
+				margin: 0 !important;
+				display: inline-block;
+				/*border-right: 2px solid #dbdbea;*/
+				border-bottom: 2px solid #dbdbea;
+				/*padding: 2px 25px;*/
+				width: 100px;
+				text-align: center;
+			}
+			nav a:last-child {
+				border-right: none;
+				border-bottom: none;
+			}
+		}
+
+
+	</style>
+	</head>
+	<body class="dup-body">
+		<div id="app">
+			<div class="dup-body-wrap">
+				<!-- Start Header Area -->
+				<header class="default-header positionfix">
+					<div class="header-wrap">
+						<div class="header-top d-flex justify-content-between align-items-center">
+							<div class="logo">
+								<a href="index1.html"><img src="img/logo.png" alt=""></a>
+							</div>
+							<div class="main-menubar d-flex align-items-center">
+								<nav class="hide">
+									<a href="index1.html">Home</a>
+									<a href="generic.html">Generic</a>
+									<a href="elements.html">Elements</a>
+								</nav>
+								<div class="menu-bar"><span class="lnr lnr-menu"></span></div>
+							</div>
+						</div>
+					</div>
+				</header>
+				<!-- End Header Area -->
+				<!-- Start Banner Area -->
+				<section class="banner-area relative">
+					<!--<div class="overlay overlay-bg"></div>-->
+					<div class="container-full">
+						<baidu-map class="row fullscreen align-items-center justify-content-between" :center="center" :zoom="zoom"
+								   @dragend="dragend"
+								   @moving="syncCenterAndZoom"
+								   @moveend="syncCenterAndZoom"
+								   @zoomend="syncCenterAndZoom"  id="allmap">
+							<!--定位	-->
+							<bm-geolocation anchor="BMAP_ANCHOR_BOTTOM_RIGHT" :show-address-bar="true" :auto-location="true" @locationSuccess="getLocationSuccess" @locationError="getLocationError"></bm-geolocation>
+							<span v-for="partner in partners" :key="partner.partnerId">
+								<bm-marker :position="{lng: partner.partnerLng, lat: partner.partnerLat}" :dragging="true" @click="infoWindowOpen">
+									<bm-info-window :position="{lng: partner.partnerLng, lat: partner.partnerLat}" :key="partner.partnerId" :show="show" @close="infoWindowClose" @open="infoWindowOpen" ><h1>{{partner.partnerId}}</h1><hr/></bm-info-window>
+								</bm-marker>
+							</span>
+
+						</baidu-map>
+					</div>
+				</section>
+				<!-- End Banner Area -->
+				<!-- End Achivement Area -->
+			</div>
+		</div>
+
+
+		<script src="front/js/vendor/jquery-2.2.4.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
+		<script src="front/js/vendor/bootstrap.min.js"></script>
+		<script src="front/js/jquery.ajaxchimp.min.js"></script>
+		<script src="front/js/owl.carousel.min.js"></script>
+		<script src="front/js/jquery.nice-select.min.js"></script>
+		<script src="front/js/jquery.magnific-popup.min.js"></script>
+		<script src="front/js/main.js"></script>
+		<script src="https://unpkg.com/vue"></script>
+		<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+		<script src="/js/toastr.js"></script>
+		<script src="/js/tip.js"></script>
+		<script src="https://unpkg.com/vue-baidu-map"></script>
+		<script>
+			toastr.options.positionClass = 'toast-top-center';
+			Vue.use(VueBaiduMap.default, {
+				ak: 'mLiFKf643aRs1dpik9CDY7gWflDSoldi',
+			})
+			new Vue({
+				el:"#app",
+				data:{
+					partners:'',
+					zoom:18,
+					center:{
+						lng: 118.08,
+						lat: 24.61
+					},
+					show:false
+				},
+				created (){
+					//var _this = this
+					console.log('2')
+					axios.get('/partner/findPartner.do',{
+						params: {
+							partnerId: 2
+						}
+					}).then(response =>
+					{
+						console.log(response);
+						this.partners=response.data.datas;
+						console.log(this.partners);
+						//this.getPartner();
+					}).catch(function (error)
+					{
+						console.log(error);
+					});
+				},
+				methods:{
+					dragend(){
+						toastr.success("成功");
+						console.log("center",this.center);
+					},
+					syncCenterAndZoom (e) {
+						const {lng, lat} = e.target.getCenter();
+						this.center.lng = lng;
+						this.center.lat = lat;
+						this.zoom = e.target.getZoom();
+					},
+					getLocationSuccess(point){
+						console.log("成功");
+						console.log("point",point);
+						toastr.success(point);
+					},
+					getLocationError(e){
+						console.log("错误");
+						toastr.error(e);
+					},
+					infoWindowClose () {
+
+						this.show = false
+					},
+					infoWindowOpen (e) {
+						console.log(e.target.position)
+						this.show = true
+					}
+				}
+			})
+
+		</script>
+	</body>
+</html>

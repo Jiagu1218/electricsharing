@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+
+<html lang="zxx" class="no-js">
+<head>
+	<!-- Mobile Specific Meta -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<!-- Favicon-->
+	<link rel="shortcut icon" href="img/fav.png">
+	<!-- Author Meta -->
+	<meta name="author" content="CodePixar">
+	<!-- Meta Description -->
+	<meta name="description" content="">
+	<!-- Meta Keyword -->
+	<meta name="keywords" content="">
+	<!-- meta character set -->
+	<meta charset="UTF-8">
+	<!-- Site Title -->
+	<title>Dup</title>
+
+	<link href="https://fonts.googleapis.com/css?family=Poppins:100,300,500" rel="stylesheet">
+		<!--
+		CSS
+		============================================= -->
+		<link rel="stylesheet" href="front/css/linearicons.css">
+		<link rel="stylesheet" href="front/css/owl.carousel.css">
+		<link rel="stylesheet" href="front/css/font-awesome.min.css">
+		<link rel="stylesheet" href="front/css/nice-select.css">
+		<link rel="stylesheet" href="front/css/magnific-popup.css">
+		<link rel="stylesheet" href="front/css/bootstrap.css">
+		<link rel="stylesheet" href="/css/bootstrap-table.css">
+		<link rel="stylesheet" href="front/css/main.css">
+		<link rel="stylesheet" href="/css/toastr.css"/>
+	<style>
+		.positionfix{
+			position: fixed;
+			top: 15px;
+		}
+		nav {
+			background-color: #00bfff85;
+		}
+		nav a{
+			font-size: 12px;
+			font-weight: 500;
+			text-transform: uppercase;
+			color: #222222;
+			margin: 0 !important;
+			display: inline-block;
+			border-right: 2px solid #dbdbea;
+			border-bottom: 2px solid #dbdbea;
+			/*padding: 2px 25px;*/
+			width: 100px;
+			text-align: center;
+		}
+		nav a:last-child {
+			border-right: none;
+			border-bottom: none;
+		}
+		@media (max-width: 767px){
+			nav {
+				padding: 0;
+			}
+			nav a{
+				font-size: 12px;
+				font-weight: 500;
+				text-transform: uppercase;
+				color: #222222;
+				margin: 0 !important;
+				display: inline-block;
+				/*border-right: 2px solid #dbdbea;*/
+				border-bottom: 2px solid #dbdbea;
+				/*padding: 2px 25px;*/
+				width: 100px;
+				text-align: center;
+			}
+			nav a:last-child {
+				border-right: none;
+				border-bottom: none;
+			}
+		}
+
+
+	</style>
+	</head>
+	<body class="dup-body">
+		<div id="app">
+			<div class="dup-body-wrap">
+				<!-- Start Header Area -->
+				<header class="default-header positionfix">
+					<div class="header-wrap">
+						<div class="header-top d-flex justify-content-between align-items-center">
+							<div class="logo">
+								<a href="index1.html"><img src="img/logo.png" alt=""></a>
+							</div>
+							<div class="main-menubar d-flex align-items-center">
+								<nav class="hide">
+									<a href="/">返回</a>
+									<!--<a href="index1.html">Home</a>
+									<a href="generic.html">Generic</a>
+									<a href="elements.html">Elements</a>-->
+								</nav>
+								<div class="menu-bar"><span class="lnr lnr-menu"></span></div>
+							</div>
+						</div>
+					</div>
+				</header>
+				<!-- End Header Area -->
+				<!-- Start studio Area -->
+				<section class="section-gap studio-area">
+					<div class="overlay overlay-bg"></div>
+					<div class="container">
+						<div class="row align-items-center">
+							<div class="col-md-4 col-sm-6 text-center">
+								<div class="studio-thumb">
+									<!--<img src="img/s.jpg" class="img-fluid" alt="">-->
+									<table class="table table-bordered table-info table-hover">
+										<tr><td>用户ID：</td><td id="userId"></td></tr>
+										<tr><td>用户名：</td><td id="userName"></td></tr>
+										<tr><td>手机号：</td><td id="userPhone"></td></tr>
+										<tr><td>缴纳定金：</td><td id="userDeposit"></td></tr>
+										<tr><td>余额：</td><td id="userBalance"></td><td><button onclick="showModal()">充值</button></td></tr>
+									</table>
+								</div>
+							</div>
+							<div class="col-md-8 col-sm-12">
+								<div class="studio-content">
+									<!-- @@@@@@@@@@@@     表格数据     @@@@@@@@@@@@@ -->
+									<table id="tb_order" class="table table-striped table-bordered table-hover"></table>
+									<!-- @@@@@@@@@@@@     表格数据     @@@@@@@@@@@@@ -->
+									<!--<h2>Green Forest Studio</h2>
+									<p>Few would argue that, despite the advancements of feminism over the past three decades, women still face a double standard when it comes to their behavior. While men’s borderline-inappropriate behavior is often laughed off as “boys will be boys,” women face higher conduct standards – especially in the workplace. That’s why it’s crucial that, as women, our behavior on the job is beyond reproach.Small Towns and Big StatesFor </p>
+									<a href="#" class="primary-btn">View More<span class="lnr lnr-arrow-right"></span></a>-->
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+				<!-- End studio Area -->
+				<!-- End Achivement Area -->
+			</div>
+			<!-- 充电桩信息模态框（Modal） detailModal
+			<div class="modal fade" id="detailModal" tabindex="-1" role="dialog"
+				 aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal"
+									aria-hidden="true">×</button>
+							<form method="post" id="powerForm" action="/hub/addHub.do">
+								<table class="table" style="font: 16px '微软雅黑' ;">
+									<thead>
+									<tr>
+										<th colspan="3">充 值：</th>
+									</tr>
+									</thead>
+									<tbody id="detail-tbody">
+									<tr><td colspan="3">充值金额：</td></tr>
+									<tr><td><button class="default">20元</button></td><button class="default">50元</button></td><button class="default">100元</button></td></tr>
+									  <tr>
+                                        <td><b>状 态：</b></td>
+                                        <td><select id="status" name="status"
+                                            class="form-control">
+                                                <option value="1">正常</option>
+                                                <option value="2">冻结</option>
+                                        </select></td>
+                                    </tr>
+									</tbody>
+								</table>
+								<div class="modal-footer" id="detail-footer">
+									<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+				 /.modal-dialog -->
+		</div>
+			<div class="modal fade" id="payModal" tabindex="-1" role="dialog"
+				 aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal"
+									aria-hidden="true">×</button>
+							<form method="post" action="/payAmount.do" id="infoForm">
+								<input type="hidden" id="WIDout_trade_no" name="WIDout_trade_no">
+								<input type="hidden" id="WIDsubject" name="WIDsubject">
+								<input type="hidden" id="WIDbody" name="WIDbody">
+								<table class="table" style="font: 16px '微软雅黑' ;">
+									<thead>
+									<tr>
+										<th colspan="3">充 值</th>
+										<!--<th></th>-->
+									</tr>
+									</thead>
+									<tbody>
+									<tr>
+										<td colspan="2">
+											<select name="WIDtotal_amount">
+												<option>10</option>
+												<option>20</option>
+												<option>50</option>
+											</select>
+										</td>
+										<td>￥</td>
+										<!--<td><input type="text" id="editPartnerName" name="partnerName" class="form-control" required/></td>-->
+									</tr>
+									<!--<tr>
+										<td><b>联 系 电 话：</b></td>
+										<td><input type="text" id="editPartnerPhone" name="partnerPhone" class="form-control" required/></td>
+									</tr>-->
+									</tbody>
+								</table>
+								<div class="modal-footer" id="editPartnerFooter">
+									<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                                    <button type="submit" class="btn btn-primary" id="btn_submit">提交</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+				<!-- /.modal-dialog -->
+			</div>
+			<!-- /.modal -->
+
+
+		<script src="front/js/vendor/jquery-2.2.4.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
+		<script src="front/js/vendor/bootstrap.min.js"></script>
+		<script src="front/js/jquery.ajaxchimp.min.js"></script>
+		<script src="front/js/owl.carousel.min.js"></script>
+		<script src="front/js/jquery.nice-select.min.js"></script>
+		<script src="front/js/jquery.magnific-popup.min.js"></script>
+		<script src="front/js/main.js"></script>
+		<script src="https://unpkg.com/vue"></script>
+		<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+		<script src="/js/bootstrap-table.js"></script>
+		<script src="/js/bootstrap-table-zh-CN.js"></script>
+		<script src="/js/toastr.js"></script>
+		<script src="/js/tip.js"></script>
+		<script>
+			toastr.options.positionClass = 'toast-top-center';
+			let user;
+			$.ajax({
+				url:'/getPersonalInfo.do',
+				type:'GET', //GET
+				//async:false,    //或false,是否异步
+				dataType:'json',    //返回的数据格式：
+				success:function(data){
+					console.log("confirm",data);
+					switch (data.state) {
+						case 0:
+							user = data.data;
+							$("#userId").html(user.userId);
+							$("#userName").html(user.userName);
+							$("#userPhone").html(user.userPhone);
+							$("#userDeposit").html(user.userDeposit);
+							$("#userBalance").html(user.userBalance);
+							break;
+						default:toastr.error(data.message);break;
+					}
+				}
+			})
+
+			$(function() {
+				//1.初始化Table
+				var oTable = new TableInit();
+				oTable.Init();
+
+				//2.初始化Button的点击事件
+				var oButtonInit = new ButtonInit();
+				oButtonInit.Init();
+
+			});
+			var TableInit = function() {
+				var oTableInit = new Object();
+				//初始化Table
+				oTableInit.Init = function() {
+					$("#tb_order").bootstrapTable({
+						url : "/order/getPersonalOrders.do", //请求后台的URL（*）
+						method : "get", //请求方式（*）
+						toolbar : "#toolbar", //工具按钮用哪个容器
+						queryParamsType : "page", //采用restful风格发送数据
+						queryParams : oTableInit.queryParams,//传递参数（*）
+						pagination: true, //是否显示分页（*）
+						sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+						pageSize: 5,                       //每页的记录行数（*）
+						columns : [ {
+							field : "orderId",
+							title : "编号",
+							align: "center",
+							valign: "middle",
+							sortable: true // 开启排序功能
+						}, {
+							field : "powerId",
+							title : "电宝",
+							align: "center",
+							valign: "middle",
+							sortable: true // 开启排序功能
+						},{
+							field : "orderRentalTime",
+							title : "租借",
+							align: "center",
+							valign: "middle",
+							sortable: true // 开启排序功能
+						}, {
+							field : "orderReturnTime",
+							title : "归还",
+							align: "center",
+							valign: "middle",
+							sortable: true // 开启排序功能
+						}, {
+							field : "orderSum",
+							title : "金额",
+							align: "center",
+							valign: "middle",
+							sortable: true // 开启排序功能
+						}]
+					});
+				};
+
+
+				//得到查询的参数  每次刷新表格都会发送这些参数，其中params的内容是表格默认参数，其余则是表格查询的条件
+				oTableInit.queryParams = function(params) {
+					//console.log(params);
+					var temp = { //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+						pageSize: params.pageSize,   //页面大小
+						pageNum: params.pageNumber,  //页码
+						//search: params.searchText,  //搜索框
+						sort: params.sortName,    //排序字段
+						order: params.sortOrder,  //排序方式
+						userId : $("#userId").val(),
+						userName : $("#userName").val(),
+						status : $("#status").val()
+					};
+					return temp;
+				};
+				return oTableInit;
+			};
+
+			//按钮的处理就是绑定事件
+			var ButtonInit = function() {
+				var oInit = new Object();
+
+				oInit.Init = function() {
+					$("#btn_delete").click(function() {
+						var arrselections = commonCheck(false);
+						if(arrselections==null)return;
+
+						Tip.confirm({
+							message : "确认要删除选择的数据吗？"
+						}).on(function(e) {
+							if (!e) return;
+							var orders = arrselections;
+							$.delAll("/order/deleteOrders.do", orders, function(res) {
+								commonChange(res);
+							});
+						});
+					});
+
+					$("#btn_edit").click(function() {
+						var arrselections = commonCheck(true);
+						if(arrselections==null)return;
+						console.log(arrselections[0]);
+						//调用setForm方法将json中的数据设置到表单中
+						$("#formChange").setForm(arrselections[0]);
+
+						$("#myModal").modal();
+					});
+
+					$("#btn_query").click(function() {
+						$("#tb_order").bootstrapTable("refresh");
+					});
+				};
+
+				return oInit;
+			};
+
+			//统一取选中数据并做校验
+			function commonCheck(only){
+				var arrselections = $("#tb_order").bootstrapTable("getSelections");
+				//console.log(arrselections[0]);
+				if(only&&arrselections.length > 1){
+					toastr.warning("只能选择一行进行编辑");
+					return null;
+				}
+				if (arrselections.length <= 0) {
+					toastr.warning("请选择有效数据");
+					return null;
+				}
+				return arrselections;
+			}
+			
+			function showModal() {
+				GetDateNow();
+				$("#payModal").modal("show");
+			}
+
+			//支付宝表单js
+			function GetDateNow() {
+				var vNow = new Date();
+				var sNow = "";
+				sNow += String(vNow.getFullYear());
+				sNow += String(vNow.getMonth() + 1);
+				sNow += String(vNow.getDate());
+				sNow += String(vNow.getHours());
+				sNow += String(vNow.getMinutes());
+				sNow += String(vNow.getSeconds());
+				sNow += String(vNow.getMilliseconds());
+				$("#WIDout_trade_no").val(sNow);
+				$("#WIDsubject").val("魔电共享电宝平台");
+				$("#WIDbody").val("魔电共享电宝平台充值");
+			}
+		</script>
+	</body>
+</html>

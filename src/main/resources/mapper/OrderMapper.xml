@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyxy.dao.OrderDao">
+  <resultMap id="BaseResultMap" type="com.cyxy.entity.Order">
+    <id column="orderId" jdbcType="INTEGER" property="orderId" />
+    <result column="userId" jdbcType="INTEGER" property="userId" />
+    <result column="powerId" jdbcType="INTEGER" property="powerId" />
+    <result column="orderRentalTime" jdbcType="TIMESTAMP" property="orderRentalTime" />
+    <result column="orderReturnTime" jdbcType="TIMESTAMP" property="orderReturnTime" />
+    <result column="orderSum" jdbcType="DOUBLE" property="orderSum" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    orderId, userId, powerId, orderRentalTime, orderReturnTime, orderSum
+  </sql>
+
+  <select id="findOrder" resultType="com.cyxy.entity.OrderDTO">
+    SELECT `order`.*,`user`.userName FROM `order`,`user` WHERE `order`.userId=`user`.userId
+    <if test="orderId !=null and orderId != ''">
+      and orderId = #{orderId}
+    </if>
+    <if test="userName != null and userName != ''">
+      and `user`.userName like CONCAT('%',#{userName},'%')
+    </if>
+    <if test="status == '已归还'">
+      and orderReturnTime is not null
+    </if>
+    <if test="status == '未归还'">
+      and orderReturnTime is null
+    </if>
+  </select>
+
+  <delete id="deleteOrders" parameterType="java.util.List" >
+    DELETE FROM `order` WHERE orderId in
+    <foreach collection="list" item="orderId" open="(" separator="," close=")">
+      #{orderId}
+    </foreach>
+  </delete>
+
+  <insert id="insertOrder" parameterType="com.cyxy.entity.Order">
+    insert into `order`(userId, powerId, orderRentalTime) value (#{userId},#{powerId},#{orderRentalTime})
+  </insert>
+
+  <select id="needCompleteOrder" resultType="com.cyxy.entity.Order">
+    select <include refid="Base_Column_List"/> from `order` where userId = #{userId} and orderReturnTime is null
+  </select>
+
+  <update id="updateOrderAfterReturn" parameterType="com.cyxy.entity.Order">
+    update `order` set orderReturnTime = #{orderReturnTime},orderSum = #{orderSum} where orderId = #{orderId}
+  </update>
+
+  <select id="getPersonalOrders" resultType="com.cyxy.entity.Order">
+    select <include refid="Base_Column_List"/> from `order` where userId = #{userId}
+  </select>
+</mapper>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<title>Lowin</title>
+	<link rel="stylesheet" href="/css/auth.css">
+	<link rel="stylesheet" href="/css/toastr.css"/>
+</head>
+
+<body>
+	<div class="lowin">
+		<div class="lowin-brand">
+			<img src="/images/kodinger.jpg" alt="logo">
+		</div>
+		<div class="lowin-wrapper">
+			<div class="lowin-box lowin-login">
+				<div class="lowin-box-inner">
+					<form method="post">
+						<p>登录以继续</p>
+						<div class="lowin-group">
+							<label>用户名 <a href="#" class="login-back-link">注册?</a></label>
+							<input type="text" autocomplete="on" name="userName" class="lowin-input" >
+						</div>
+
+						<div class="lowin-group password-group">
+							<label>密 码 <a class="forgot-link" @click="forgetPassword" style="display: none;">忘记密码?</a></label>
+							<input id="loginPassword" type="password" name="userPassword" autocomplete="current-password" class="lowin-input">
+						</div>
+						<button class="lowin-btn login-btn">
+							登 录
+						</button>
+
+						<div class="text-foot">
+							没有账号? <a href="" class="register-link">注册</a>
+						</div>
+					</form>
+				</div>
+			</div>
+
+			<div class="lowin-box lowin-register">
+				<div class="lowin-box-inner">
+					<form action="/userRegister.do" method="post" onsubmit="return beforeSubmit()">
+						<p>让我们来创建一个账号</p>
+						<div class="lowin-group">
+							<label>用户名</label>
+							<input id="registerUserName" type="text" name="userName" autocomplete="on" class="lowin-input" onchange="checkName()"><span id="userNameTip" class="register-tip"></span>
+						</div>
+						<div class="lowin-group">
+							<label>手机号</label>
+							<input id="registerUserPhone" type="number" autocomplete="on" name="userPhone" class="lowin-input" onchange="checkPhone()"><span id="userPhoneTip" class="register-tip"></span>
+						</div>
+						<div class="lowin-group">
+							<label>验证码<a id="getCode" onclick="sendCode()">获取验证码</a></label>
+							<input id="smsCode" type="number" name="code" autocomplete="off" class="lowin-input" onchange="checkCode()"><span id="codeTip" class="register-tip"></span>
+						</div>
+						<div class="lowin-group">
+							<label>密 码</label>
+							<input id="registerUserPassword" type="password" name="userPassword" autocomplete="on" class="lowin-input" onchange="checkPassword()"><span id="passwordTip" class="register-tip"></span>
+						</div>
+						<button class="lowin-btn">
+							注册
+						</button>
+
+						<div class="text-foot">
+							已经有账号了? <a href="" class="login-link">登录</a>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<script src="/js/jquery-1.10.2.js"></script>
+	<script src="/js/auth.js"></script>
+	<script src="/js/toastr.js"></script>
+	<script src="/js/tip.js"></script>
+	<script type="text/javascript" th:inline="javascript">
+		toastr.options.positionClass = 'toast-top-center';
+		Auth.init({
+			login_url: '/userLogin.do',
+			forgot_url: '#forgot'
+		});
+		let uniqueUserName = false;
+		let uniqueUserPhone = false;
+		let codeState = false;
+		let passwordState = false;
+		//从后台取值弹出消息
+		let msg = [[${msg}]];
+		if(msg!=""&&msg!=undefined){
+			toastr.warning(msg);
+		}
+		let regMsg = [[${regMsg}]];
+		if(regMsg!=""&&regMsg!=undefined){
+			toastr.success(regMsg);
+		}
+		function checkName(){
+			console.log( "username",$("#registerUserName").val());
+			$.ajax({
+				url:'/checkUserName.do',
+				type:'GET', //GET
+				//async:false,    //或false,是否异步
+				data:{
+					userName : $("#registerUserName").val()
+				},
+				dataType:'json',    //返回的数据格式：
+				success:function(data){
+					let tip = $("#userNameTip");
+					switch (data.state) {
+						case 107:
+							tip.html('✔').show();
+							uniqueUserName = true;
+							break;
+						default:
+							tip.html('❌').show();
+							uniqueUserName = false;
+							toastr.error(data.message);
+							break;
+					}
+				}
+			})
+		}
+
+		function checkPhone(){
+			console.log( "username",$("#registerUserPhone").val());
+			$.ajax({
+				url:'/checkUserPhone.do',
+				type:'GET', //GET
+				//async:false,    //或false,是否异步
+				data:{
+					userPhone : $("#registerUserPhone").val()
+				},
+				dataType:'json',    //返回的数据格式：
+				success:function(data){
+					let tip = $("#userPhoneTip");
+					switch (data.state) {
+						case 109:
+							tip.html('✔').show();
+							uniqueUserPhone = true;
+							break;
+						default:
+							tip.html('❌').show();
+							uniqueUserPhone = false;
+							toastr.error(data.message);
+							break;
+					}
+				}
+			})
+		}
+
+		function sendCode() {
+			console.log("验证码");
+			let myReg=/^((17[0-9])|(14[0-9])|(13[0-9])|(15[^4,\D])|(18[0,5-9]))\d{8}$/;
+			let userPhone = $("#registerUserPhone").val();
+			if (!myReg.test(userPhone)){
+				toastr.error("手机号码错误");
+				return
+			}
+			$.ajax({
+				url:'/sendCode.do',
+				type:'GET', //GET
+				data:{
+					userPhone : $("#registerUserPhone").val()
+				},
+				dataType:'json',    //返回的数据格式：
+				success:function(data){
+					let a = $("#getCode");
+					switch (data.state) {
+						case 113:
+							toastr.success(data.message);
+							a.removeAttr('onclick');
+							break;
+						default:
+							toastr.error(data.message);
+							break;
+					}
+				}
+			})
+		}
+
+		function checkCode(){
+			let smsCode = $("#smsCode");
+			if (smsCode.val().trim().length != 6) {
+				return;
+			}
+			$.ajax({
+				url:'/checkSmsCode.do',
+				type:'POST', //GET
+				data:{
+					smsCode : $("#smsCode").val().trim()
+				},
+				dataType:'json',    //返回的数据格式：
+				success:function(data){
+					let tip = $("#codeTip");
+					switch (data.state) {
+						case 115:
+							tip.html('✔').show();
+							codeState = true;
+							break;
+						default:
+							tip.html('❌').show();
+							codeState = false;
+							toastr.error(data.message);
+							break;
+					}
+				}
+			})
+		}
+
+		function checkPassword() {
+			let userPassword = $("#registerUserPassword");
+			let tip = $("#passwordTip");
+			if (userPassword.val().trim().length<4){
+				passwordState = false;
+				toastr.info("密码长度需大于4");
+				tip.html('❌').show();
+			}else {
+				passwordState = true;
+				tip.html('✔').show();
+			}
+		}
+		function beforeSubmit(){
+			if (!(uniqueUserName && uniqueUserPhone && codeState && passwordState)){
+				toastr.error("请先校验注册信息");
+				return false;
+			}
+			return true;
+		}
+	</script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyxy.dao.PowerDao">
+  <resultMap id="BaseResultMap" type="com.cyxy.entity.Power">
+    <id column="powerId" jdbcType="INTEGER" property="powerId" />
+    <result column="powerState" jdbcType="VARCHAR" property="powerState" />
+    <result column="powerFull" jdbcType="BIT" property="powerFull" />
+    <result column="orderReturnTime" jdbcType="TIMESTAMP" property="orderReturnTime" />
+    <result column="hubId" jdbcType="INTEGER" property="hubId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    powerId, powerState, powerFull, orderReturnTime, hubId
+  </sql>
+  <select id="findPowerByHubId" resultType="com.cyxy.entity.Power">
+    select <include refid="Base_Column_List"/> from power where hubId = #{hubId}
+  </select>
+
+  <select id="canReturnPowerCount" resultType="java.lang.Integer">
+    SELECT a.allPort-b.powerAcount canReturn FROM
+    (SELECT IFNULL(SUM(hubPort),0) allPort FROM hub where partnerId = #{partnerId}  and hub.hubState="正常" ) a,
+    (SELECT COUNT(powerId) powerAcount  FROM hub,power,partner  WHERE hub.hubId=power.hubId
+    AND hub.partnerId = partner.partnerId and partner.partnerId = #{partnerId} and power.powerState="正常" and hub.hubState="正常" ) b
+  </select>
+
+  <select id="canRentPowerCount" resultType="java.lang.Integer">
+    SELECT COUNT(power.powerId) canRentCount FROM hub,power,partner WHERE hub.hubId=power.hubId
+    AND hub.partnerId = partner.partnerId AND powerFull =1 and power.powerState="正常" and hub.hubState="正常" and  hub.partnerId = #{partnerId}
+  </select>
+
+  <select id="cnaRentPowerList" resultType="com.cyxy.entity.Power">
+    SELECT power.* FROM hub,power,partner
+    WHERE hub.hubId=power.hubId AND hub.partnerId = partner.partnerId
+    AND partner.partnerId = #{partnerId} AND hub.hubState = "正常"
+    AND power.powerState ="正常" AND powerFull = 1
+  </select>
+
+  <update id="updatePowerState" parameterType="com.cyxy.entity.Power">
+    update power set powerState = #{powerState}
+    <if test="powerFull != null">
+      ,powerFull = #{powerFull}
+    </if>
+    <if test="orderReturnTime != null">
+      ,orderReturnTime = #{orderReturnTime}
+    </if>
+    ,hubId = #{hubId}
+    where powerId = #{powerId}
+  </update>
+
+  <update id="updatePowerFullState">
+      UPDATE power SET powerFull = TRUE WHERE hubId is not NULL
+      AND hubId IN ( SELECT hubId FROM hub WHERE hubState = "正常")
+      AND powerFull = FALSE and TIMESTAMPDIFF(HOUR, orderReturnTime, NOW())>=2
+  </update>
+
+  <insert id="addPowerList" parameterType="java.util.List">
+    insert into power(powerFull, orderReturnTime, hubId) values
+    <foreach collection="list" item="power" separator="," >
+      (#{power.powerFull}, #{power.orderReturnTime}, #{power.hubId})
+    </foreach>
+  </insert>
+
+  <select id="findPower" resultType="com.cyxy.entity.Power">
+    select <include refid="Base_Column_List"/> from power where 1=1
+    <if test="powerState != null and powerState != ''">
+      and powerState = #{powerState}
+    </if>
+    <if test="hubId != null and hubId != ''">
+      and hubId = #{hubId}
+    </if>
+    <if test="powerId != null and powerId != ''">
+      and powerId = #{powerId}
+    </if>
+  </select>
+
+  <delete id="deletePowers" parameterType="java.util.List">
+    DELETE FROM power WHERE powerId in
+    <foreach collection="list" item="powerId" open="(" separator="," close=")">
+      #{powerId}
+    </foreach>
+  </delete>
+
+</mapper>

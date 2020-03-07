@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>HUB管理</title>
+	<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Dashboard">
+    <meta name="keyword" content="Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
+	<script type="text/javascript" th:src="@{/js/loader.js}"></script>
+
+  </head>
+  <!-- 复杂版的页面，可作为进阶整合案例 -->
+  <body>
+  	<div id="wrapper">
+  		<div th:replace="rest/main::#header"></div>
+  		<div th:replace="rest/main::#menu"></div>
+		<div id="page-wrapper">
+			<div id="page-inner">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h3>HUB信息管理 </h3>
+							</div>
+							<div class="panel-body">
+								<form id="formSearch" class="form-horizontal">
+									<div class="form-group" style="margin:15px">
+										<label class="control-label col-sm-1" for="hubid">编 号:</label>
+										<div class="col-sm-2">
+											<input type="text" class="form-control" id="hubid"/>
+										</div>
+										<label class="control-label col-sm-1" for="partnerid">商 家:</label>
+										<div class="col-sm-2">
+											<input type="number" class="form-control" id="partnerid"/>
+										</div>
+										<label class="control-label col-sm-1" for="hubstate">状 态:</label>
+										<div class="col-sm-2">
+											<select class="form-control" id="hubstate">
+													<option value="">全部</option>
+													<option>正常</option>
+													<option>冻结</option>
+											</select>
+										</div>
+										<div class="col-sm-3" style="text-align:center;">
+											<button type="button" id="btn_query" class="btn btn-primary">
+												<span class="glyphicon glyphicon-search" aria-hidden="true"></span> 查询
+											</button>
+										</div>
+									</div>
+								</form>
+								<div id="toolbar" class="btn-group">
+									<button id="btn_add" type="button" class="btn btn-default">
+										<span class="glyphicon glyphicon-plus" aria-hidden="true"></span> 新增
+									</button>
+									<button id="btn_edit" type="button" class="btn btn-default">
+										<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> 修改
+									</button>
+									<button id="btn_delete" type="button" class="btn btn-default">
+										<span class="glyphicon glyphicon-remove" aria-hidden="true"></span> 删除
+									</button>
+									<button id="btn_freeze" type="button" class="btn btn-default">
+										<span class="glyphicon glyphicon-retweet" aria-hidden="true"></span> 冻结/解冻
+									</button>
+								</div>
+								<!-- @@@@@@@@@@@@     表格数据     @@@@@@@@@@@@@ -->
+								<div id="allmap" style="height: 700px"></div>
+								<!-- @@@@@@@@@@@@     表格数据     @@@@@@@@@@@@@ -->
+							</div>
+						</div>
+						<!-- 模态框（Modal） myModal-->
+						<div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+							aria-labelledby="myModalLabel" aria-hidden="true">
+							<div class="modal-dialog">
+								<div class="modal-content">
+									<div class="modal-header">
+										<button type="button" class="close" data-dismiss="modal"
+											aria-hidden="true">×</button>
+										<form method="post" id="formChange">
+											<input type="hidden" id="cid" name="cid" class="form-control">
+											<table class="table" style="font: 16px '微软雅黑' ;">
+												<thead>
+													<tr>
+														<th>HUB 信 息：</th>
+														<th></th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr>
+														<td><b>商 家：</b></td>
+														<td><input type="text" id="cname" name="cname" class="form-control"/></td>
+													</tr>
+													<tr>
+														<td><b>端 口 数：</b></td>
+														<td><input type="text" id="mobile" name="mobile" class="form-control"/></td>
+													</tr>
+													<tr>
+														<td><b>状 态：</b></td>
+														<td><select id="status" name="status"
+															class="form-control">
+																<option value="1">正常</option>
+																<option value="2">冻结</option>
+														</select></td>
+													</tr>
+												</tbody>
+											</table>
+											<div class="modal-footer">
+												<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+												<button type="button" class="btn btn-primary" id="btn_submit">提交</button>
+											</div>
+										</form>
+									</div>
+								</div>
+							</div>
+							<!-- /.modal-dialog -->
+						</div>
+						<!-- /.modal -->
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript" src="http://api.map.baidu.com/api?v=3.0&ak=mLiFKf643aRs1dpik9CDY7gWflDSoldi"></script>
+	<script type="text/javascript">
+
+		//判断当前浏览器是否支持WebSocket
+		var adminId="[[${session.admin.adminId }]]";
+		console.log(adminId);
+        var socketUrl="ws://localhost:8080/adminWebsocket/"+adminId;
+		if('WebSocket' in window){
+			websocket = new WebSocket(socketUrl);
+		}
+		else{
+			alert('Not support websocket')
+		}
+
+		$(function() {
+			var map = new BMap.Map("allmap");    // 创建Map实例
+			map.centerAndZoom(new BMap.Point(118.08, 24.61), 16);  // 初始化地图,设置中心点坐标和地图级别
+			//2.初始化Button的点击事件
+			var oButtonInit = new ButtonInit();
+			oButtonInit.Init();
+
+		});
+		
+	
+		var ButtonInit = function() {
+			var oInit = new Object();
+	
+			oInit.Init = function() {
+			
+				$("#btn_add").click(function() {
+					//添加的时候先清空所有数据，包括id
+					$("#myModal").find(".form-control").val("");
+					$("#myModal").modal();
+				});
+	
+				$("#btn_edit").click(function() {
+					var arrselections = commonCheck(true);
+					if(arrselections==null)return;
+					console.log(arrselections[0]);
+					//调用setForm方法将json中的数据设置到表单中
+					$("#formChange").setForm(arrselections[0]);
+	
+					$("#myModal").modal();
+				});
+	
+				$("#btn_delete").click(function() {
+					var arrselections = commonCheck(false);
+					if(arrselections==null)return;
+	
+					Tip.confirm({
+						message : "确认要删除选择的数据吗？"
+					}).on(function(e) {
+						if (!e) return;
+						var cus = arrselections;
+						$.delAll("restcustomer.do", cus, function(res) {
+							commonChange(res);
+						});
+					});
+				});
+				
+				$("#btn_freeze").click(function() {
+					var arrselections = commonCheck(false);
+					if(arrselections==null)return;
+	
+					Tip.confirm({
+						message : "确认要改变选择数据的状态吗？"
+					}).on(function(e) {
+						if (!e) return;
+						var cus = arrselections;
+						$.edit("freezecustomer.do", cus, function(res) {
+							commonChange(res);
+						});
+					});
+				});
+				
+				$("#btn_submit").click(function() {
+					var param = $("#formChange").serializeJson();
+					//console.log(param);
+					if($("#cid").val()!=""){
+						$.edit("restcustomer.do", param, function(res) {
+							commonChange(res);
+						});
+					}else{
+						$.add("restcustomer.do", param, function(res) {
+							commonChange(res);
+						});
+					}
+				});
+	
+				$("#btn_query").click(function() {
+					$('#tb_cus').bootstrapTable("refresh");
+				});
+			};
+	
+			return oInit;
+		};
+		
+		//统一取选中数据并做校验
+		function commonCheck(only){
+			var arrselections = $('#tb_cus').bootstrapTable("getSelections");
+			console.log(arrselections[0]);
+			if(only&&arrselections.length > 1){
+				toastr.warning("只能选择一行进行编辑");
+				return null;
+			}
+			if (arrselections.length <= 0) {
+				toastr.warning("请选择有效数据");
+				return null;
+			}
+			return arrselections;
+		}
+		
+		//针对增删改的返回内容做统一化处理
+		function commonChange(res){
+			if (res.state == 0) {
+	        	toastr.success(res.message);
+	        	$("#myModal").modal("hide");
+	        	$('#tb_cus').bootstrapTable("refresh");
+	    	}else{
+	    		toastr.error(res.message);
+	    	}
+		}
+	</script>
+  </body>
+</html>
